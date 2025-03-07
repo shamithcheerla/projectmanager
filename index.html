@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1200px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+            animation: slideIn 1s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .project-form, .task-form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input, button {
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        input {
+            flex: 1;
+        }
+
+        button {
+            background: #ff6b6b;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #e52e71;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .projects, .tasks {
+            margin-bottom: 30px;
+        }
+
+        .project, .task {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.5s ease-in-out;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .project:hover, .task:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .comment-section {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-section input {
+            flex: 1;
+        }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Project Management Tool</h1>
+        </div>
+
+        <form class="project-form" onsubmit="addProject(event)">
+            <input type="text" id="projectName" placeholder="Enter project name" required>
+            <button type="submit">Add Project</button>
+        </form>
+
+        <div class="projects" id="projects"></div>
+
+        <script>
+            function addProject(event) {
+                event.preventDefault();
+                const projectName = document.getElementById('projectName').value;
+                const projectContainer = document.getElementById('projects');
+                const project = document.createElement('div');
+                project.className = 'project';
+                project.innerHTML = `
+                    <h2>${projectName}</h2>
+                    <button class="delete-btn" onclick="deleteProject(this)">Delete Project</button>
+                    <form class="task-form" onsubmit="addTask(event, this)">
+                        <input type="text" placeholder="Add a task" required>
+                        <button type="submit">Add Task</button>
+                    </form>
+                    <div class="tasks"></div>
+                `;
+                projectContainer.appendChild(project);
+                document.getElementById('projectName').value = '';
+            }
+
+            function deleteProject(button) {
+                button.parentElement.remove();
+            }
+
+            function addTask(event, form) {
+                event.preventDefault();
+                const taskInput = form.querySelector('input');
+                const taskName = taskInput.value;
+                const taskContainer = form.nextElementSibling;
+                const task = document.createElement('div');
+                task.className = 'task';
+                task.innerHTML = `
+                    <p>${taskName}</p>
+                    <button class="delete-btn" onclick="deleteTask(this)">Delete Task</button>
+                    <div class="comment-section">
+                        <input type="text" placeholder="Add a comment">
+                        <button onclick="addComment(this)">Comment</button>
+                    </div>
+                `;
+                taskContainer.appendChild(task);
+                taskInput.value = '';
+            }
+
+            function deleteTask(button) {
+                button.parentElement.remove();
+            }
+
+            function addComment(button) {
+                const commentInput = button.previousElementSibling;
+                const commentText = commentInput.value;
+                if (commentText.trim() !== '') {
+                    const comment = document.createElement('p');
+                    comment.textContent = commentText;
+                    button.parentElement.appendChild(comment);
+                    commentInput.value = '';
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
